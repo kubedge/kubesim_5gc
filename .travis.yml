@@ -6,8 +6,8 @@ jobs:
     - stage: build docker image
       script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker build -t $DOCKER_USERNAME/kubeplay:latest images/kubeplay
+      - docker build -t $DOCKER_USERNAME/kubeplay:amd64 images/kubeplay
       - docker images
-      - docker push $DOCKER_USERNAME/kubeplay:latest
+      - docker push $DOCKER_USERNAME/kubeplay:amd64
     - stage: test
-      script: docker run --rm $DOCKER_USERNAME/kubeplay:latest
+      script: docker run --rm $DOCKER_USERNAME/kubeplay:amd64
