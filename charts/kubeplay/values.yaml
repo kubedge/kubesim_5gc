@@ -3,8 +3,8 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 image:
-  repository: jbrette/kubeplay
-  tag: amd64
+  repository: jbrette/kubeplay-amd64
+  tag: 0.1.0
   pullPolicy: IfNotPresent
 service:
   name: kubeplay
