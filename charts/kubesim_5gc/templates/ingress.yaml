@@ -1,12 +1,12 @@
 {{- if .Values.ingress.enabled -}}
-{{- $serviceName := include "kubeplay.fullname" . -}}
+{{- $serviceName := include "kubesim_5gc.fullname" . -}}
 {{- $servicePort := .Values.service.externalPort -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "kubeplay.fullname" . }}
+  name: {{ template "kubesim_5gc.fullname" . }}
   labels:
-    app: {{ template "kubeplay.name" . }}
+    app: {{ template "kubesim_5gc.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}

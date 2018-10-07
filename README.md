@@ -1,4 +1,4 @@
-# kubeplay
+# kubesim_5gc
 
 Kubernetes Playground
 
