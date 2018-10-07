@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "kubeplay.fullname" . }}
+  name: {{ template "kubesim_5ec.fullname" . }}
   labels:
-    app: {{ template "kubeplay.name" . }}
+    app: {{ template "kubesim_5ec.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
       name: {{ .Values.service.name }}
   selector:
-    app: {{ template "kubeplay.name" . }}
+    app: {{ template "kubesim_5ec.name" . }}
     release: {{ .Release.Name }}

@@ -1,2 +1,2 @@
-# kubeplay
+# kubesim_5gc
 
