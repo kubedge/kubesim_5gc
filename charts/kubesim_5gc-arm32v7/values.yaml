@@ -3,11 +3,11 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 image:
-  repository: jbrette/kubeplay-arm32v7
+  repository: jbrette/kubesim_5gc-arm32v7
   tag: 0.1.0
   pullPolicy: IfNotPresent
 service:
-  name: kubeplay
+  name: kubesim_5gc
   type: NodePort
   externalPort: 8005
   internalPort: 8080

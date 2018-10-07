@@ -1,4 +1,4 @@
-# kubeplay
+# kubesim_5gc
 
 Kubernetes Playground
 
@@ -21,7 +21,7 @@ Kubernetes Playground
 
 ## latest
 
-Deployment
+Deployment on kubedge SDK 
 
 ## arm32v7
 
