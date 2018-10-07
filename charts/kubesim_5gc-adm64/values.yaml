@@ -3,11 +3,11 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 image:
-  repository: jbrette/kubesim_5ec-amd64
+  repository: jbrette/kubesim_5gc-amd64
   tag: 0.1.0
   pullPolicy: IfNotPresent
 service:
-  name: kubesim_5ec
+  name: kubesim_5gc
   type: NodePort
   externalPort: 8005
   internalPort: 8080
