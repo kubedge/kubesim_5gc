@@ -3,7 +3,7 @@ sudo: true
 language: go
 
 go:
-  - "1.10.x"
+  - "1.11.x"
 
 service:
   - docker
@@ -15,7 +15,7 @@ jobs:
       - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-arm32v7
       - export VERSION=0.1.0
       - cd kubesim_5gc
-      - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o goserv .
+      - CGO_ENABLED=0 GOOS=linux GOARM=7 GOARCH=arm go build -a -installsuffix cgo -o goserv .
       - cd ..
       - docker run --rm --privileged multiarch/qemu-user-static:register --reset
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
