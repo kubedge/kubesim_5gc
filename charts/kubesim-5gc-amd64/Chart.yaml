@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Kubedge 5G NC Simulator
+name: kubesim-5gc-amd64
+version: 0.1.0
