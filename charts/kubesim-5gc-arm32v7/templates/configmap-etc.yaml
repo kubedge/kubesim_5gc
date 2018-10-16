@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubesim-5gc-etc
+data:
+  config: |-
+    ---
+    product_name: epc
+    product_type: 4g
+    product_family: ran
+    product_release: test
+    feature_set1:
+    - one
+    - two
+    feature_set2:
+    - alpha
+    - beta

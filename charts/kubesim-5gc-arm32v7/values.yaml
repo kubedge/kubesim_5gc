@@ -4,8 +4,8 @@
 replicaCount: 1
 image:
   repository: hack4easy/kubesim_5gc-arm32v7
-  tag: 0.1.0
-  pullPolicy: IfNotPresent
+  tag: latest
+  pullPolicy: Always
 service:
   name: kubesim-5gc
   type: NodePort
