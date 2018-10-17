@@ -4,7 +4,7 @@
 replicaCount: 1
 nameOverride: kubesim-nr
 nodeSelector:
-  kubedgeNodeType: core
+  kubedgeNodeType: 5g-core
 image:
   repository: hack4easy/kubesim_5gc-arm32v7
   tag: latest
