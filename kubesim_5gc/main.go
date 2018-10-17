@@ -27,7 +27,7 @@ func main() {
   log.Printf("5gc server:  connected=%s", conn.Connected)
 
   //run server forever
-  server.Server()
+  server.Server(conf)
   http.HandleFunc("/", sayHello)
   if err := http.ListenAndServe(":8080", nil); err != nil {
     panic(err)
