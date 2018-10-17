@@ -15,3 +15,4 @@ data:
     feature_set2:
     - alpha
     - beta
+    enable_log: true
