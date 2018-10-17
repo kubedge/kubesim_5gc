@@ -15,4 +15,4 @@ data:
     feature_set2:
     - alpha
     - beta
-    enable_log: true
+    enable_log: {{ .Values.enable_log }}
