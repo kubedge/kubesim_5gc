@@ -14,7 +14,8 @@ image:
 service:
   name: kubesim-5gc
   type: NodePort
-  externalPort: 8005
+  externalPort: 50052
+  nodePort: 30181
   internalPort: 8080
   healthPort: 8081
 ingress:
