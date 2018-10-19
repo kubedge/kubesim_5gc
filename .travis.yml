@@ -12,7 +12,7 @@ jobs:
   include:
     - stage: build docker image
       script:
-      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-dev
+      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-amd64
       - export VERSION=0.1.0
       - cd kubesim_5gc
       - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o goserv .
@@ -25,7 +25,7 @@ jobs:
       - docker push $DHUBREPO
     - stage: test
       script:
-      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-dev
+      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-amd64
       - export VERSION=0.1.0
       - docker run -d -p 127.0.0.1:8080:80 --name hello $DHUBREPO:$VERSION
       - docker ps | grep -q hello
