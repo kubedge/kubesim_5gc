@@ -17,19 +17,20 @@ jobs:
   include:
     - stage: build docker image
       script:
-      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-dev
+      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-arm32v7
       - export VERSION=0.1.20
-      - GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/_output/bin/goserv -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
+      - GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -o build/_output/arm32v7/goserv -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker build -t $DHUBREPO:$VERSION -f build/Dockerfile .
+      - docker build -t $DHUBREPO:$VERSION -f build/Dockerfile.arm32v7 .
       - docker images
       - docker tag $DHUBREPO:$VERSION $DHUBREPO:latest
       - docker tag $DHUBREPO:$VERSION $DHUBREPO:travis-$TRAVIS_BUILD_NUMBER
       - docker push $DHUBREPO
     - stage: test
       script:
-      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-dev
+      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-arm32v7
       - export VERSION=0.1.20
+      - docker run --rm --privileged multiarch/qemu-user-static:register --reset
       - docker run -d -p 127.0.0.1:8080:80 --name hello $DHUBREPO:$VERSION
       - docker ps | grep -q hello
       # - curl -vsf 'http://127.0.0.1:8080/index.html' &> /dev/stdout
