@@ -11,8 +11,7 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.externalPort }}
-      targetPort: {{ .Values.service.internalPort }}
-      protocol: TCP
+      nodePort: {{ .Values.service.nodePort }}
       name: {{ .Values.service.name }}
   selector:
     app: {{ template "kubesim_5gc.name" . }}

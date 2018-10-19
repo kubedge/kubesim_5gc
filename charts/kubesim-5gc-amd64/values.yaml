@@ -1,16 +1,23 @@
-# Default values for kubesim-5gc chart.
+# Default values for kuplay-chart.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 replicaCount: 1
+nameOverride: kubesim-nr
+nodeSelector:
+  kubedgeNodeType: 5g-core
 image:
   repository: hack4easy/kubesim_5gc-amd64
-  tag: 0.1.0
-  pullPolicy: IfNotPresent
+  tag: latest
+  pullPolicy: Always
+  healthrepository: hack4easy/kubesim_health-amd64
+  healthtag: latest
 service:
   name: kubesim-5gc
   type: NodePort
-  externalPort: 8005
+  externalPort: 50052
+  nodePort: 30181
   internalPort: 8080
+  healthPort: 8081
 ingress:
   enabled: false
   # Used to create an Ingress record.
@@ -35,3 +42,4 @@ resources: {}
   # requests:
   #  cpu: 100m
   #  memory: 128Mi
+enable_log: true
