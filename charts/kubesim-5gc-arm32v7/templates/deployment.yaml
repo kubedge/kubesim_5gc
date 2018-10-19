@@ -1,0 +1,59 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "kubesim_5gc.fullname" . }}
+  labels:
+    app: {{ template "kubesim_5gc.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "kubesim_5gc.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: side-{{ .Chart.Name }}
+          image: "{{ .Values.image.healthrepository }}:{{ .Values.image.healthtag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.healthPort }}
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: {{ .Values.service.healthPort }}
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: {{ .Values.service.healthPort }}
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.internalPort }}
+          volumeMounts:
+            - name: kubesim-5gc-etc
+              mountPath: /etc/kubedge/kubesim_conf.yaml
+              subPath: kubesim_conf.yaml
+              readOnly: true
+            - name: kubedge
+              mountPath: /etc/kubedge
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      volumes:
+        - name: kubesim-5gc-etc
+          configMap:
+            name: kubesim-5gc-etc
+            items:
+             - key: config
+               path: kubesim_conf.yaml
+        - name: kubedge
+          hostPath:
+            path: /etc/kubedge
+    {{- end }}
