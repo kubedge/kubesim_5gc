@@ -1,0 +1,96 @@
+{{/*
+Copyright 2018 Kubedge.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "kubesim_5gc.fullname" . }}
+  labels:
+    app: {{ template "kubesim_5gc.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "kubesim_5gc.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: configapi
+          image: "{{ .Values.image.healthRepository }}:{{ .Values.image.healthTag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.healthPort }}
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: {{ .Values.service.healthPort }}
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: {{ .Values.service.healthPort }}
+        - name: blinkt
+          image: "{{ .Values.image.blinktRepository }}:{{ .Values.image.blinktTag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+             privileged: true
+             allowPrivilegeEscalation: true
+          ports:
+            - containerPort: {{ .Values.service.blinktPort }}
+          volumeMounts:
+            - name: kubesim-5gc-blinkt
+              mountPath: /etc/kubedge/blinkt_conf.yaml
+              subPath: blinkt_conf.yaml
+              readOnly: true
+            - name: kubedge
+              mountPath: /etc/kubedge
+        - name: main
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.internalPort }}
+          volumeMounts:
+            - name: kubesim-5gc-etc
+              mountPath: /etc/kubedge/kubesim_conf.yaml
+              subPath: kubesim_conf.yaml
+              readOnly: true
+            - name: kubedge 
+              mountPath: /etc/kubedge
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}
+      volumes:
+        - name: kubesim-5gc-etc
+          configMap:
+            name: kubesim-5gc-etc
+            items:
+             - key: config
+               path: kubesim_conf.yaml
+        - name: kubesim-5gc-blinkt
+          configMap:
+            name: kubesim-5gc-blinkt
+            items:
+             - key: config
+               path: blinkt_conf.yaml
+        - name: kubedge
+          hostPath:
+            path: /etc/kubedge
