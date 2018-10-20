@@ -20,10 +20,10 @@ nameOverride: kubesim-nr
 nodeSelector:
   kubedgeNodeType: 5g-core
 image:
-  repository: hack4easy/kubesim_5gc-arm32v7
+  repository: hack4easy/kubesim_5gc-amd64
   tag: latest
   pullPolicy: Always
-  healthrepository: hack4easy/kubesim_health-arm32v7
+  healthrepository: hack4easy/kubesim_health-amd64
   healthtag: latest
 service:
   name: kubesim-5gc
