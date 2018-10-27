@@ -62,6 +62,7 @@ spec:
     {{- if .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}
       volumes:
         - name: kubesim-5gc-etc
           configMap:
@@ -72,4 +73,3 @@ spec:
         - name: kubedge
           hostPath:
             path: /etc/kubedge
-    {{- end }}
