@@ -25,28 +25,43 @@ import (
 	"strings"
 )
 
-func sayHello(w http.ResponseWriter, r *http.Request) {
+const SIM_NAME = "KUBESIM 5GC"
+const SIM_CONFIG_FILE = "/etc/kubedge/kubesim_conf.yaml"
+const SIM_CONNECTED_UE_FILE = "/etc/kubedge/connected_ue.yaml"
+const SIMPLE_HTTP_SERVER = false
+
+func sim_message(msg string) {
+	log.Printf("%s: %s", SIM_NAME, msg)
+}
+
+func configAPI(w http.ResponseWriter, r *http.Request) {
 	message := r.URL.Path
 	message = strings.TrimPrefix(message, "/")
-	message = "kubesim 5gc simulator " + message
+	message = SIM_NAME + " : " + message
 	w.Write([]byte(message))
 }
+
 func main() {
-	log.Printf("%s", "kubesim_5gc is running")
+	sim_message("Starting")
 
 	var conf config.Configdata
-	conf.Config()
-	log.Printf("5gc server:  product_name=%s, product_type=%s, product_family=%s, product_release=%s, feature_set1=%s, feature_set2=%s",
-		conf.Product_name, conf.Product_type, conf.Product_family, conf.Product_release, conf.Feature_set1, conf.Feature_set2)
+	conf.Config(SIM_NAME, SIM_CONFIG_FILE)
+	log.Printf("%s: product_name=%s, product_type=%s, product_family=%s, product_release=%s, feature_set1=%s, feature_set2=%s",
+		SIM_NAME, conf.Product_name, conf.Product_type, conf.Product_family, conf.Product_release, conf.Feature_set1, conf.Feature_set2)
 
-	var conn connected.Connecteddata
-	conn.Readconnectvalues()
-	log.Printf("5gc server:  connected=%s", conn.Connected)
+	if !SIMPLE_HTTP_SERVER {
+		var conn connected.Connecteddata
+		conn.Readconnectvalues(SIM_NAME, SIM_CONNECTED_UE_FILE)
+		log.Printf("%s: Currently Connected UEs: %s", SIM_NAME, conn.Connected)
 
-	//run server forever
-	server.Server(conf)
-	http.HandleFunc("/", sayHello)
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		panic(err)
+		//run server forever
+		server.Server(SIM_NAME, conf)
+	} else {
+		// Simple HTTP Server instead of endless loop
+		http.HandleFunc("/", configAPI)
+		if err := http.ListenAndServe(":8080", nil); err != nil {
+			panic(err)
+		}
 	}
+	sim_message("Exiting")
 }
