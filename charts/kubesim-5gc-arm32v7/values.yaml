@@ -22,7 +22,7 @@ nodeSelector:
 image:
   repository: hack4easy/kubesim_5gc-arm32v7
   tag: latest
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   healthrepository: hack4easy/kubesim_health-arm32v7
   healthtag: latest
 service:
