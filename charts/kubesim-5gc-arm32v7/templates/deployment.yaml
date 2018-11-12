@@ -32,7 +32,7 @@ spec:
         release: {{ .Release.Name }}
     spec:
       containers:
-        - name: side-{{ .Chart.Name }}
+        - name: configapi
           image: "{{ .Values.image.healthrepository }}:{{ .Values.image.healthtag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -45,7 +45,7 @@ spec:
             httpGet:
               path: /readiness
               port: {{ .Values.service.healthPort }}
-        - name: {{ .Chart.Name }}
+        - name: main
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
