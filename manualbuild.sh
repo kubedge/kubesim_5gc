@@ -1,5 +1,5 @@
 #!/bin/bash -x
-export DHUBREPO="hack4easy/kubesim_5gc-arm32v7"
+export DHUBREPO="hack4easy/kubesim_5gc-arm64v8"
 export VERSION="0.1.0"
 export DOCKER_NAMESPACE="hack4easy"
 export DOCKER_USERNAME="kubedgedevops"
