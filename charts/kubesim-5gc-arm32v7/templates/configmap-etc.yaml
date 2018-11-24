@@ -25,6 +25,8 @@ data:
     product_type: 5g
     product_family: core
     product_release: test
+    kubedge_server_port: ":50051"
+    kubedge_server_address: "192.168.2.101:30180"
     feature_set1:
     - one
     - two
