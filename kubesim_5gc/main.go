@@ -22,6 +22,7 @@ import (
 	"github.com/kubedge/kubesim_base/grpc/go/kubedge_server"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -43,6 +44,11 @@ func configAPI(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	sim_message("Starting")
+	connected_ue_file := SIM_CONNECTED_UE_FILE
+	if len(os.Args) == 2 {
+		connected_ue_file = os.Args[1]
+	}
+	log.Printf("%s: connected_ue=%s", SIM_NAME, connected_ue_file)
 
 	var conf config.Configdata
 	conf.Config(SIM_NAME, SIM_CONFIG_FILE)
@@ -51,8 +57,11 @@ func main() {
 
 	if !SIMPLE_HTTP_SERVER {
 		var conn connected.Connecteddata
-		conn.Readconnectvalues(SIM_NAME, SIM_CONNECTED_UE_FILE)
-		log.Printf("%s: Currently Connected UEs: %s", SIM_NAME, conn.Connected)
+		conn.Readconnectvalues(SIM_NAME, connected_ue_file)
+
+		for imsi, value := range conn.Connected {
+			log.Printf("%s: Currently Connected UEs: %s %s", SIM_NAME, imsi, value)
+		}
 
 		//run server forever
 		server.Server(SIM_NAME, conf)
