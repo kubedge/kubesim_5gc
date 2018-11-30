@@ -16,15 +16,15 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 replicaCount: 1
-nameOverride: kubesim-nr
+nameOverride: kubesim-5gc
 nodeSelector:
   kubedgeNodeType: 5g-core
 image:
   repository: hack4easy/kubesim_5gc-arm32v7
   tag: latest
   pullPolicy: IfNotPresent
-  healthrepository: hack4easy/kubesim_health-arm32v7
-  healthtag: latest
+  healthRepository: hack4easy/kubesim_health-arm32v7
+  healthTag: latest
   # blinkt container
   blinktRepository: kubedge1/kubesim_blinkt-arm32v7
   blinktTag: latest

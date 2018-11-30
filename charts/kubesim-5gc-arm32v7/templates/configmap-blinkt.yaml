@@ -22,7 +22,7 @@ data:
   config: |-
     ---
     algorithm: fixed5
-    intensity: 3
+    intensity: 5
     pixel0: []
     pixel1: []
     pixel2: []
@@ -30,4 +30,4 @@ data:
     pixel4: []
     pixel5: []
     pixel6: []
-    pixel7: [75, 255, 75]
+    pixel7: [255, 0, 0]
