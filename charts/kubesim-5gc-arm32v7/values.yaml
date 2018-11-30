@@ -25,6 +25,9 @@ image:
   pullPolicy: IfNotPresent
   healthrepository: hack4easy/kubesim_health-arm32v7
   healthtag: latest
+  # blinkt container
+  blinktRepository: kubedge1/kubesim_blinkt-arm32v7
+  blinktTag: latest
 service:
   name: kubesim-5gc
   type: NodePort
@@ -32,6 +35,7 @@ service:
   nodePort: 30181
   internalPort: 8080
   healthPort: 8081
+  blinktPort: 8082
 ingress:
   enabled: false
   # Used to create an Ingress record.
