@@ -15,7 +15,7 @@ General questions should go to the [kubedge](https://kubedge.cloud) instead of t
 
 ## Contributing code
 
-Please read the [Contribution Guidelines](https://golang.org/doc/contribute.html)
+Please read the [Contribution Guidelines](https://kubedge.cloud/contribute/)
 before sending patches.
 
 **We do not accept GitHub pull requests**
