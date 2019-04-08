@@ -13,7 +13,6 @@
 # limitations under the License.
 
 FROM scratch
-ADD kubesim_5gc/ca-certificates.crt /etc/ssl/certs/
-ADD kubesim_5gc/goserv /goserv
-EXPOSE 8080
+ADD build/etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+ADD build/_output/arm32v7/goserv /goserv
 CMD ["/goserv"]

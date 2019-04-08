@@ -1,4 +1,4 @@
-module github.com/kubedge/kubesim_5gc/kubesim_5gc
+module github.com/kubedge/kubesim_5gc
 
 go 1.12
 
