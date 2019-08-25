@@ -18,7 +18,7 @@ jobs:
     - stage: build docker image
       script:
       - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-dev
-      - export VERSION=0.1.0
+      - export VERSION=0.1.9
       - GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/_output/bin/goserv -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker build -t $DHUBREPO:$VERSION -f build/Dockerfile .
@@ -29,7 +29,7 @@ jobs:
     - stage: test
       script:
       - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-dev
-      - export VERSION=0.1.0
+      - export VERSION=0.1.9
       - docker run -d -p 127.0.0.1:8080:80 --name hello $DHUBREPO:$VERSION
       - docker ps | grep -q hello
       # - curl -vsf 'http://127.0.0.1:8080/index.html' &> /dev/stdout

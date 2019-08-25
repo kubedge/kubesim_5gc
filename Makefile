@@ -1,7 +1,7 @@
 
 # Image URL to use all building/pushing image targets
 COMPONENT        ?= kubesim_5gc
-VERSION_V1       ?= 0.1.0
+VERSION_V1       ?= 0.1.9
 DHUBREPO_DEV     ?= hack4easy/${COMPONENT}-dev
 DHUBREPO_AMD64   ?= hack4easy/${COMPONENT}-amd64
 DHUBREPO_ARM32V7 ?= hack4easy/${COMPONENT}-arm32v7
