@@ -17,18 +17,18 @@ jobs:
   include:
     - stage: build docker image
       script:
-      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-arm32v7
+      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-arm64v8
       - export VERSION=0.1.19
-      - GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -o build/_output/arm32v7/goserv -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
+      - GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o build/_output/arm64v8/goserv -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker build -t $DHUBREPO:$VERSION -f build/Dockerfile.arm32v7 .
+      - docker build -t $DHUBREPO:$VERSION -f build/Dockerfile.arm64v8 .
       - docker images
       - docker tag $DHUBREPO:$VERSION $DHUBREPO:latest
       - docker tag $DHUBREPO:$VERSION $DHUBREPO:travis-$TRAVIS_BUILD_NUMBER
       - docker push $DHUBREPO
     - stage: test
       script:
-      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-arm32v7
+      - export DHUBREPO=$DOCKER_NAMESPACE/kubesim_5gc-arm64v8
       - export VERSION=0.1.19
       - docker run --rm --privileged multiarch/qemu-user-static:register --reset
       - docker run -d -p 127.0.0.1:8080:80 --name hello $DHUBREPO:$VERSION

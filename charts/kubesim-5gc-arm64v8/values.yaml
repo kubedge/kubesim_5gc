@@ -16,18 +16,15 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 replicaCount: 1
-nameOverride: kubesim-5gc
+nameOverride: kubesim-nr
 nodeSelector:
   kubedgeNodeType: 5g-core
 image:
-  repository: hack4easy/kubesim_5gc-arm32v7
+  repository: hack4easy/kubesim_5gc-arm64v8
   tag: latest
   pullPolicy: IfNotPresent
-  healthRepository: hack4easy/kubesim_health-arm32v7
-  healthTag: latest
-  # blinkt container
-  blinktRepository: kubedge1/kubesim_blinkt-arm32v7
-  blinktTag: latest
+  healthrepository: hack4easy/kubesim_health-arm64v8
+  healthtag: latest
 service:
   name: kubesim-5gc
   type: NodePort
@@ -35,7 +32,6 @@ service:
   nodePort: 30181
   internalPort: 8080
   healthPort: 8081
-  blinktPort: 8082
 ingress:
   enabled: false
   # Used to create an Ingress record.

@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
         - name: configapi
-          image: "{{ .Values.image.healthRepository }}:{{ .Values.image.healthTag }}"
+          image: "{{ .Values.image.healthrepository }}:{{ .Values.image.healthtag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.healthPort }}
@@ -45,21 +45,6 @@ spec:
             httpGet:
               path: /readiness
               port: {{ .Values.service.healthPort }}
-        - name: blinkt
-          image: "{{ .Values.image.blinktRepository }}:{{ .Values.image.blinktTag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          securityContext:
-             privileged: true
-             allowPrivilegeEscalation: true
-          ports:
-            - containerPort: {{ .Values.service.blinktPort }}
-          volumeMounts:
-            - name: kubesim-5gc-blinkt
-              mountPath: /etc/kubedge/blinkt_conf.yaml
-              subPath: blinkt_conf.yaml
-              readOnly: true
-            - name: kubedge
-              mountPath: /etc/kubedge
         - name: main
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -70,7 +55,7 @@ spec:
               mountPath: /etc/kubedge/kubesim_conf.yaml
               subPath: kubesim_conf.yaml
               readOnly: true
-            - name: kubedge 
+            - name: kubedge
               mountPath: /etc/kubedge
           resources:
 {{ toYaml .Values.resources | indent 12 }}
@@ -85,12 +70,6 @@ spec:
             items:
              - key: config
                path: kubesim_conf.yaml
-        - name: kubesim-5gc-blinkt
-          configMap:
-            name: kubesim-5gc-blinkt
-            items:
-             - key: config
-               path: blinkt_conf.yaml
         - name: kubedge
           hostPath:
             path: /etc/kubedge
