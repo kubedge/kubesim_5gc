@@ -55,7 +55,7 @@ docker-build: fmt vet-v1 docker-build-dev docker-build-amd64 docker-build-arm32v
 
 docker-build-dev:
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/_output/bin/goserv -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
-	docker build . -f build/Dockerfile -t ${IMG_DEV}
+	docker build . -f build/Dockerfile.dev -t ${IMG_DEV}
 	docker tag ${IMG_DEV} ${DHUBREPO_DEV}:latest
 
 docker-build-amd64:
