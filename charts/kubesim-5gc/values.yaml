@@ -18,16 +18,16 @@
 replicaCount: 1
 nameOverride: kubesim-5gc
 nodeSelector:
-  kubedgeNodeType: 5g-core
+  kubedgeNodeType: 5gc-core
 image:
-  repository: hack4easy/kubesim_5gc-arm32v7
-  tag: latest
+  repository: hack4easy/kubesim_5gc
+  tag: v0.2.20
   pullPolicy: IfNotPresent
-  healthRepository: hack4easy/kubesim_health-arm32v7
-  healthTag: latest
+  healthRepository: hack4easy/kubesim_health
+  healthTag: 0.2.24
   # blinkt container
-  blinktRepository: kubedge1/kubesim_blinkt-arm32v7
-  blinktTag: latest
+  blinktRepository: kubedge1/kubesim_blinkt
+  blinktTag: 0.2.24
 service:
   name: kubesim-5gc
   type: NodePort
