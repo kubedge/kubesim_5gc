@@ -27,3 +27,5 @@ go.work
 *.swp
 *.swo
 *~
+.DS_Store
+.DS_Store
