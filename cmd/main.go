@@ -39,7 +39,9 @@ func configAPI(w http.ResponseWriter, r *http.Request) {
 	message := r.URL.Path
 	message = strings.TrimPrefix(message, "/")
 	message = SIM_NAME + " : " + message
-	w.Write([]byte(message))
+	if _, err := w.Write([]byte(message)); err != nil {
+		log.Printf("%s: configAPI write failed: %v", SIM_NAME, err)
+	}
 }
 
 func main() {
