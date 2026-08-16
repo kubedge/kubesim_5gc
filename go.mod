@@ -1,11 +1,11 @@
 module github.com/kubedge/kubesim_5gc
 
-go 1.20
+go 1.26.0
 
 require (
-	github.com/kubedge/kubesim_base/config v0.1.24
-	github.com/kubedge/kubesim_base/connected v0.1.24
-	github.com/kubedge/kubesim_base/grpc/go v0.1.24
+	github.com/kubedge/kubesim_base/config v0.1.25
+	github.com/kubedge/kubesim_base/connected v0.1.25
+	github.com/kubedge/kubesim_base/grpc/go v0.1.25
 )
 
 require (

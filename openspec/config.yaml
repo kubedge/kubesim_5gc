@@ -1,0 +1,19 @@
+schema: spec-driven
+
+context: |
+  Role: CONSUMER in the kubedge SIMULATOR family. 5G Core (5GC) network-function simulator.
+  Plain Go app (LIGHT on Kubernetes).
+
+  Dependency (Notes 15-16):
+    - Compile-time: consumes github.com/kubedge/kubesim_base (config+connected+grpc/go),
+      CURRENT pin v0.1.25 (realigned to the latest published kubesim_base) -> realign only when kubesim_base cuts a NEWER tag.
+    - Runtime: built into image(s) and run on a cluster (arm64: Apple-Silicon + Pi armv8).
+
+  Build / versioning:
+    - go currently 1.26 (folded via the kubesim_lte graft; Dockerfile pins golang:1.26, CI reads go.mod). Tag scheme plain vX.Y.Z at image level (no k8s encoding).
+    - Makefile now builds a buildx multi-arch manifest list (arm64 primary) from build/Dockerfile.buildkit.
+
+rules:
+  spec:
+    - Describe CURRENT behavior; do not spec aspirational features.
+    - Name the sim base / paired operator when behavior depends on them.

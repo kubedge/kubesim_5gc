@@ -1,0 +1,163 @@
+name: CI
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  detect:
+    name: Detect stack
+    runs-on: ubuntu-latest
+    outputs:
+      python: ${{ steps.detect.outputs.python }}
+      bash: ${{ steps.detect.outputs.bash }}
+      bats: ${{ steps.detect.outputs.bats }}
+      go: ${{ steps.detect.outputs.go }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: detect
+        run: |
+          if [[ -f pyproject.toml ]]; then
+            echo "python=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "python=false" >> "$GITHUB_OUTPUT"
+          fi
+          if compgen -G "bin/*" >/dev/null || compgen -G "tests/*.bats" >/dev/null; then
+            echo "bash=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "bash=false" >> "$GITHUB_OUTPUT"
+          fi
+          # `bats` gates the actual test run — true only when .bats files exist,
+          # so a project with bin/ scripts but no bats suite doesn't fail on
+          # `bats tests/` ("Found no tests"). `bash` still gates shell linting.
+          if compgen -G "tests/*.bats" >/dev/null; then
+            echo "bats=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "bats=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [[ -f go.mod ]]; then
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          fi
+  lint:
+    name: lint
+    needs: detect
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install uv
+        if: needs.detect.outputs.python == 'true'
+        uses: astral-sh/setup-uv@v7
+      - name: ruff
+        if: needs.detect.outputs.python == 'true'
+        run: |
+          uv sync --locked
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: shellcheck + shfmt
+        if: needs.detect.outputs.bash == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq shellcheck
+          curl -sSfL "https://github.com/mvdan/sh/releases/download/v3.9.0/shfmt_v3.9.0_linux_amd64" -o /tmp/shfmt
+          chmod +x /tmp/shfmt && sudo mv /tmp/shfmt /usr/local/bin/shfmt
+          # Only scan tracked shell files — avoids recursing into .venv, etc.
+          mapfile -t sh_files < <(git ls-files '*.sh' '*.bash' 'bin/*' | grep -Ev '^(\.venv|node_modules|dist|build)/' || true)
+          if [[ ${#sh_files[@]} -gt 0 ]]; then
+            shellcheck "${sh_files[@]}"
+            shfmt -d -i 2 -ci -bn "${sh_files[@]}"
+          fi
+  test:
+    name: test
+    needs: detect
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install uv
+        if: needs.detect.outputs.python == 'true'
+        uses: astral-sh/setup-uv@v7
+      - name: pytest
+        if: needs.detect.outputs.python == 'true'
+        run: |
+          uv sync --locked
+          uv run pytest
+      - name: bats
+        if: needs.detect.outputs.bats == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq bats
+          bats tests/
+  secret-scan:
+    name: secret-scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      # Use the gitleaks binary directly — gitleaks-action requires a paid
+      # license for org-owned repos, and we don't need its PR-comment features.
+      - name: gitleaks
+        run: |
+          GITLEAKS_VERSION=8.21.2
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar -xz -C /tmp gitleaks
+          /tmp/gitleaks detect --source . --redact --verbose
+  # Go / operator jobs — gated on go.mod presence (per go-stack-profile).
+  # All four are skipped on python/bash-only repos (detect.outputs.go == 'false').
+  go-build:
+    name: go-build
+    needs: detect
+    if: needs.detect.outputs.go == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+        # single-component sim: package main lives directly in ./cmd, so a bare
+        # `go build ./...` collides with the cmd/ dir ("output 'cmd' already
+        # exists"). Discard the binary — this job checks compilation, not artifacts.
+      - run: go build -o /dev/null ./...
+  go-vet:
+    name: go-vet
+    needs: detect
+    if: needs.detect.outputs.go == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: go vet ./...
+  go-test:
+    name: go-test
+    needs: detect
+    if: needs.detect.outputs.go == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: go test ./... -race -coverprofile=cover.out
+  golangci-lint:
+    name: golangci-lint
+    needs: detect
+    if: needs.detect.outputs.go == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.12.2
