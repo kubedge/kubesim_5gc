@@ -1,4 +1,4 @@
-FROM alpine:3.9
+FROM alpine:3.15
 
 ENV OPERATOR=/usr/local/bin/goserv \
     USER_UID=1001 \
