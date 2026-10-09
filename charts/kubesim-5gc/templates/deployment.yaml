@@ -25,6 +25,11 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
+{{- if eq .Values.blinkt.mode "agent" }}
+  # The new pod needs this pod's LED claim to be released first.
+  strategy:
+    type: Recreate
+{{- end }}
   selector:
     matchLabels:
       app: {{ template "kubesim_5gc.name" . }}
@@ -48,6 +53,7 @@ spec:
             httpGet:
               path: /readiness
               port: {{ .Values.service.healthPort }}
+{{- if eq .Values.blinkt.mode "legacy" }}
         - name: blinkt
           image: "{{ .Values.image.blinktRepository }}:{{ .Values.image.blinktTag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -63,6 +69,7 @@ spec:
               readOnly: true
             - name: kubedge
               mountPath: /etc/kubedge
+{{- end }}
         - name: main
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -88,12 +95,19 @@ spec:
             items:
              - key: config
                path: kubesim_conf.yaml
+{{- if eq .Values.blinkt.mode "legacy" }}
         - name: kubesim-5gc-blinkt
           configMap:
             name: kubesim-5gc-blinkt
             items:
              - key: config
                path: blinkt_conf.yaml
+{{- end }}
         - name: kubedge
           hostPath:
             path: /etc/kubedge
+{{- if eq .Values.blinkt.mode "agent" }}
+      resourceClaims:
+        - name: blinkt
+          resourceClaimTemplateName: {{ template "kubesim_5gc.fullname" . }}-blinkt-{{ .Values.blinkt | toJson | sha256sum | trunc 8 }}
+{{- end }}
