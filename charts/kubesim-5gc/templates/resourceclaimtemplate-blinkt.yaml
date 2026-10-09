@@ -1,0 +1,38 @@
+{{- if not (has .Values.blinkt.mode (list "agent" "legacy")) }}
+{{- fail (printf "blinkt.mode must be agent or legacy, not %q" .Values.blinkt.mode) }}
+{{- end }}
+{{- if eq .Values.blinkt.mode "agent" }}
+# The simulator's Blinkt! LED, claimed through DRA. blinkt-operator in agent
+# mode lights it with this PixelConfig while the pod holds the claim.
+# The name carries a hash of .Values.blinkt: a ResourceClaimTemplate's spec is
+# immutable, so a changed pixel or colour gets a new template (and a new pod).
+apiVersion: resource.k8s.io/v1
+kind: ResourceClaimTemplate
+metadata:
+  name: {{ template "kubesim_5gc.fullname" . }}-blinkt-{{ .Values.blinkt | toJson | sha256sum | trunc 8 }}
+  labels:
+    app: {{ template "kubesim_5gc.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  spec:
+    devices:
+      requests:
+        - name: led
+          exactly:
+            deviceClassName: {{ .Values.blinkt.deviceClassName }}
+            selectors:
+              - cel:
+                  expression: 'device.attributes["blinkt.kubedge.io"].index == {{ int .Values.blinkt.pixel }}'
+      config:
+        - requests: [led]
+          opaque:
+            driver: blinkt.kubedge.io
+            parameters:
+              apiVersion: blinkt.kubedge.io/v1alpha1
+              kind: PixelConfig
+              color: {{ toJson .Values.blinkt.color }}
+              intensity: {{ int .Values.blinkt.intensity }}
+              algorithm: {{ .Values.blinkt.algorithm }}
+{{- end }}

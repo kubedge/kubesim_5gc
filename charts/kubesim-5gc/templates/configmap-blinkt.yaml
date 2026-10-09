@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 
+{{- if eq .Values.blinkt.mode "legacy" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -31,3 +32,4 @@ data:
     pixel5: []
     pixel6: []
     pixel7: [255, 0, 0]
+{{- end }}

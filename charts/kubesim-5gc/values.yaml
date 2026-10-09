@@ -19,6 +19,18 @@ replicaCount: 1
 nameOverride: kubesim-5gc
 nodeSelector:
   kubedgeNodeType: 5g-core
+# Blinkt! LED of this simulator.
+#   agent  (default): the pod claims its LED through DRA (driver blinkt.kubedge.io);
+#                     blinkt-operator in agent mode draws it. No sidecar, no privileges.
+#   legacy:           privileged blinkt sidecar with hostPath /etc/kubedge, for
+#                     clusters without the operator.
+blinkt:
+  mode: agent
+  pixel: 7
+  color: [255, 0, 0]
+  intensity: 5
+  algorithm: fixed5
+  deviceClassName: blinkt-pixel.kubedge.io
 image:
   repository: hack4easy/kubesim_5gc
   tag: v0.2.20
