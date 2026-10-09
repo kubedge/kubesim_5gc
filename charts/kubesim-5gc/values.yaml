@@ -27,7 +27,7 @@ image:
   healthTag: 0.2.24
   # blinkt container
   blinktRepository: kubedge1/kubesim_blinkt
-  blinktTag: 0.4.0
+  blinktTag: 0.5.2
 service:
   name: kubesim-5gc
   type: NodePort
